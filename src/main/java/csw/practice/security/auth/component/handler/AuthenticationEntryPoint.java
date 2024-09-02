@@ -1,4 +1,4 @@
-package csw.practice.security.auth.component;
+package csw.practice.security.auth.component.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

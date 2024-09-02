@@ -1,6 +1,6 @@
 package csw.practice.security.service;
 
-import csw.practice.security.auth.component.JwtUtil;
+import csw.practice.security.auth.component.jwt.JwtUtil;
 import csw.practice.security.dto.*;
 import csw.practice.security.entity.Member;
 import csw.practice.security.repository.MemberRepository;
@@ -59,26 +59,4 @@ public class AuthService {
                 .map(ResponseMemberDto::from)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
     }
-
-//    @Transactional
-//    public TokenDto refresh(RequestNewAccessTokenDto dto) {
-//        // TODO: 세션쿠키로 RefreshToken을 받아오는지 Requestbody로 받아오는지 확인 필요
-//        String refreshToken = dto.getRefreshToken();
-//        if(refreshToken == null) {
-//            throw new IllegalArgumentException("RefreshToken이 필요합니다.");
-//        }
-//
-//        // 401 Unauthorized 및 로그인 페이지로 이동
-//        if(!jwtProvider.validateRefreshToken(refreshToken)) {
-//            throw new IllegalArgumentException("로그인이 필요합니다.");
-//        }
-//
-//        Long userId = jwtProvider.getUserIdFromRefreshToken(refreshToken);
-//        Member member = memberRepository.findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 회원이 존재하지 않습니다."));
-//
-//        String accessToken = jwtProvider.createAccessToken(userId, member.getRoles());
-//        String newRefreshToken = jwtProvider.createRefreshToken(userId, member.getRoles());
-//        return new TokenDto(accessToken, newRefreshToken);
-//    }
 }

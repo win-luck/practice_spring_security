@@ -1,4 +1,4 @@
-package csw.practice.security.auth.component;
+package csw.practice.security.auth.component.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +10,7 @@ import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public  class AccessDeniedHandler extends AccessDeniedHandlerImpl {
+public class AccessDeniedHandler extends AccessDeniedHandlerImpl {
 
     private final HttpRequestEndpointChecker endpointChecker;
 

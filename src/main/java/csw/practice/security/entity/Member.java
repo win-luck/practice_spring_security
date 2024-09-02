@@ -35,6 +35,8 @@ public class Member {
 
     private UserRoleEnum role;
 
+    private String timeZone;
+
     public static Member of(String name, String password, String email) {
         Member member = new Member();
         member.name = name;
@@ -42,6 +44,7 @@ public class Member {
         member.email = email;
         member.createdAt = LocalDateTime.now().toString();
         member.role = UserRoleEnum.ROLE_USER;
+        member.timeZone = "UTC";
         return member;
     }
 }

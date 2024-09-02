@@ -1,8 +1,7 @@
-package csw.practice.security.auth.component;
+package csw.practice.security.auth.component.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,21 +9,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
 @Slf4j(topic = "JwtUtil")
 @Component
 public class JwtUtil {
-    // Header KEY 값
+
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    // 사용자 권한 값의 KEY
     public static final String AUTHORIZATION_KEY = "auth";
-    // Token 식별자
     public static final String BEARER_PREFIX = "Bearer ";
-    // 토큰 만료시간 (60분)
-    private final long TOKEN_TIME = 60 * 60 * 1000L;
+    public static final String TIME_ZONE = "timeZone";
 
     private final Key accessKey;
     private final Key refreshKey;
@@ -57,6 +52,7 @@ public class JwtUtil {
     private String createToken(Long id, List<String> roles, long validityInMilliseconds, Key key) {
         Claims claims = Jwts.claims().setSubject(String.valueOf(id));
         claims.put(AUTHORIZATION_KEY, roles);
+        claims.put(TIME_ZONE, "Asia/Seoul");
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + validityInMilliseconds);
@@ -70,10 +66,9 @@ public class JwtUtil {
     }
 
     // HTTP 요청 헤더에서 JWT 추출 메서드
-    public String getJwtFromHeader(HttpServletRequest request) {
-        String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);  // "Bearer " 접두사 제거 후 토큰 반환
+    public String getJwtFromHeader(String authorizationHeader) {
+        if (StringUtils.hasText(authorizationHeader) && authorizationHeader.startsWith(BEARER_PREFIX)) {
+            return authorizationHeader.substring(7);  // "Bearer " 접두사 제거 후 토큰 반환
         }
         return null;
     }
@@ -119,6 +114,19 @@ public class JwtUtil {
     private Long getUserIdFromToken(String token, Key key) {
         Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
         return Long.parseLong(claims.getSubject());
+    }
+
+    public String getTimeZoneFromAccessToken(String token) {
+        return getTimeZoneFromToken(token, accessKey);
+    }
+
+    public String getTimeZoneFromRefreshToken(String token) {
+        return getTimeZoneFromToken(token, refreshKey);
+    }
+
+    private String getTimeZoneFromToken(String token, Key key) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+        return claims.getOrDefault(TIME_ZONE, "Asia/Seoul").toString();
     }
 
     // 토큰에서 사용자 권한 추출 (액세스 토큰)

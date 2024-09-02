@@ -1,4 +1,4 @@
-package csw.practice.security.auth.component;
+package csw.practice.security.auth.component.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +16,13 @@ public class HttpRequestEndpointChecker {
 
     private final DispatcherServlet servlet;
 
+    // URI 엔드포인트 존재 여부 확인하여 Spring Security가 403을 띄우기 전에 404를 감지하도록 함
     public boolean isEndpointExist(HttpServletRequest request) {
         for (HandlerMapping handlerMapping : servlet.getHandlerMappings()) {
             try {
                 if (handlerMapping instanceof RequestMappingHandlerMapping) {
                     HandlerExecutionChain foundHandler = handlerMapping.getHandler(request);
                     if (foundHandler != null) {
-                        log.info("Endpoint exists: {}", request.getRequestURI());
                         return true;
                     }
                 }

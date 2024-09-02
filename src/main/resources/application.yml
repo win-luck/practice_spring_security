@@ -7,7 +7,7 @@ spring:
     jpa:
         show-sql: true
         hibernate:
-            ddl-auto: none
+            ddl-auto: update
         properties:
             hibernate:
                 dialect: org.hibernate.dialect.MySQL8Dialect
@@ -17,5 +17,5 @@ jwt:
         access: PP92X6YBH7lSREAQcd+8dZhgx7/XGy8XvcPGKjZrDYs=
         refresh: PP92X6YBH7lSREAQcd+8dZhgx7/XGy8XvcPGKjZrDYs=
     expiredIn:
-        access: 300000000
-        refresh: 86400
+        access: 3600 # 1 hour
+        refresh: 604800 # 1 week

@@ -1,11 +1,14 @@
 package csw.practice.security.config;
 
-import csw.practice.security.auth.component.*;
+import csw.practice.security.auth.component.handler.AccessDeniedHandler;
+import csw.practice.security.auth.component.handler.AuthenticationEntryPoint;
+import csw.practice.security.auth.component.handler.HttpRequestEndpointChecker;
+import csw.practice.security.auth.component.jwt.JwtAuthenticationFilter;
+import csw.practice.security.auth.component.jwt.JwtUtil;
+import csw.practice.security.service.CustomUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,7 +23,7 @@ import org.springframework.web.servlet.DispatcherServlet;
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtUtil jwtUtil;
     private final DispatcherServlet dispatcherServlet;
     private final HttpRequestEndpointChecker endpointChecker;
 
@@ -30,16 +33,11 @@ public class WebSecurityConfig {
     }
 
     private static final String[] PERMIT_URL_ARRAY = {
-           "/error", "/api/user/**"
+           "/error", "/api/**"
     };
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomUserDetailService customUserDetailService) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -51,11 +49,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(PERMIT_URL_ARRAY)
                         .permitAll()
-                        .anyRequest().
-                        authenticated()
+                        .anyRequest()
+                        .authenticated()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtUtil, customUserDetailService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }
