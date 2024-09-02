@@ -1,0 +1,21 @@
+spring:
+    datasource:
+        url: jdbc:mysql://localhost:3306/security?useSSL=false
+        username: root
+        password: gkswn@102
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: none
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+    secret:
+        access: PP92X6YBH7lSREAQcd+8dZhgx7/XGy8XvcPGKjZrDYs=
+        refresh: PP92X6YBH7lSREAQcd+8dZhgx7/XGy8XvcPGKjZrDYs=
+    expiredIn:
+        access: 300000000
+        refresh: 86400
