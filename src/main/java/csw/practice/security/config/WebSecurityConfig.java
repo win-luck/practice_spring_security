@@ -24,16 +24,11 @@ import org.springframework.web.servlet.DispatcherServlet;
 public class WebSecurityConfig {
 
     private final JwtUtil jwtUtil;
-    private final DispatcherServlet dispatcherServlet;
     private final HttpRequestEndpointChecker endpointChecker;
 
-    @Bean
-    public HttpRequestEndpointChecker endpointChecker() {
-        return new HttpRequestEndpointChecker(dispatcherServlet);
-    }
-
+    // 허용할 URL 목록
     private static final String[] PERMIT_URL_ARRAY = {
-           "/error", "/api/**"
+           "/error"
     };
 
     @Bean
